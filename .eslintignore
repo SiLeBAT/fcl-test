@@ -1,0 +1,9 @@
+# See https://eslint.org/docs/user-guide/configuring/ignoring-code#the-eslintignore-file for more about ignoring files.
+
+# cypress examples
+/cypress/examples
+
+# compiled output
+/cypress/videos
+/cypress/snapshots
+/cypress/screenshots
