@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        .legend {
+            display: grid;
+            grid-template-columns: min-content auto;
+            border: solid black 1px;
+            border-left-width: 2px;
+            border-top-width: 2px;
+        }
+
+        .table {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto auto;
+            border: solid black 1px;
+            border-left-width: 2px;
+            border-top-width: 2px;
+        }
+
+        .row {
+            display: contents;
+        }
+
+        .row div {
+            border-right: solid black 1px;
+            border-bottom: solid black 1px;
+            padding: 0.1rem;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
+
+        .row #package {
+            font-weight: bold;
+        }
+
+        .row--header div {
+            font-weight: bold;
+            background-color: transparent;
+        }
+
+        .critical div {
+            background-color: red;
+        }
+
+        .unstable div {
+            background-color: lightsalmon;
+        }
+
+        .watch div {
+            background-color: khaki;
+        }
+
+        .stable div {
+            background-color: lightgreen;
+        }
+    </style>
+</head>
+<html>
+
+<body>
+    <h1>Package Maintenance Sheet - FCL-Web-Test - 26.04.2022</h1>
+    <h2>Legend</h2>
+    <div class="legend">
+        <div class="row stable">
+            <div>Stable</div>
+            <div>Commonly used and well supported. Essential for the app and up-to-date.</div>
+        </div>
+        <div class="row watch">
+            <div>Watch</div>
+            <div>Rarely used and not so well supported but up-to-date. Consider replacement or removal.</div>
+        </div>
+        <div class="row unstable">
+            <div>Unstable</div>
+            <div>Unsupported, deprecated or obsolete. Incompatible with other libraries or not up-to-date.</div>
+        </div>
+        <div class="row critical">
+            <div>Critical</div>
+            <div>Contains critical security issues and has to be replaced or updated.</div>
+        </div>
+    </div>
+    <h2>Production Dependencies</h2>
+    <div class="table">
+        <div class="row row--header">
+            <div id="package">Package</div>
+            <div id="environment">Environment</div>
+            <div id="description">Description</div>
+            <div id="usage">Usage</div>
+            <div id="essential">Essential</div>
+            <div id="stability">Stability</div>
+            <div id="semantic">Semantic</div>
+        </div>
+    </div>
+
+    <h2>Development Dependencies</h2>
+
+    <div class="table">
+        <div class="row row--header">
+            <div id="package">Package</div>
+            <div id="environment">Environment</div>
+            <div id="description">Description</div>
+            <div id="usage">Usage</div>
+            <div id="essential">Essential</div>
+            <div id="stability">Stability</div>
+            <div id="semantic">Semantic</div>
+        </div>
+        <div class="row stable">
+            <div id="package">@typescript-eslint/eslint-plugin</div>
+            <div id="environment">eslint</div>
+            <div id="description">eslint rules for typescript</div>
+            <div id="usage">linting</div>
+            <div id="essential">yes</div>
+            <div id="stability">stable</div>
+            <div id="semantic">yes</div>
+        </div>
+        <div class="row unstable">
+            <div id="package">cypress</div>
+            <div id="environment">cypress</div>
+            <div id="description">e2e test framework</div>
+            <div id="usage">e2e tests</div>
+            <div id="essential">yes</div>
+            <div id="stability">current version ^4. latest version ^9, update</div>
+            <div id="semantic">assumed</div>
+        </div>
+        <div class="row stable">
+            <div id="package">eslint</div>
+            <div id="environment">eslint</div>
+            <div id="description">linter</div>
+            <div id="usage">linting</div>
+            <div id="essential">yes</div>
+            <div id="stability">stable</div>
+            <div id="semantic">yes</div>
+        </div>
+        <div class="row stable">
+            <div id="package">eslint-plugin-cypress</div>
+            <div id="environment">eslint</div>
+            <div id="description">linter rules for cypress (An ESLint plugin for Cypress tests)</div>
+            <div id="usage">linting</div>
+            <div id="essential">yes</div>
+            <div id="stability">stable</div>
+            <div id="semantic">assumed</div>
+        </div>
+        <div class="row watch">
+            <div id="package">rimraf</div>
+            <div id="environment">system</div>
+            <div id="description">remove files</div>
+            <div id="usage">npm script</div>
+            <div id="essential">yes</div>
+            <div id="stability">latest release is 2 years old</div>
+            <div id="semantic"></div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,43 +1,19 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "downlevelIteration": true,
-        "importHelpers": true,
-        "outDir": "./dist/out-tsc",
-        "baseUrl": "src",
-        "paths": {
-            "@app/*": ["app/*"],
-            "@env/*": ["environments/*"]
-        },
-        "sourceMap": true,
-        "declaration": false,
-        "moduleResolution": "node",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Node 16",
 
-        // the following compiler flag are planned to be set
-        // "alwaysStrict": true,
-        // "noImplicitAny": true,
-        // "noImplicitThis": true,
-        // "strictNullChecks": true,
-        // "strictBindCallApply": true,
-        // "strictFunctionTypes": true,
-        // "strictPropertyInitialization": true,
-        // "strict": true
+   "compilerOptions": {
+      "lib": ["es2020"],
+      "module": "commonjs",
+      "target": "es2020",
 
-        // "noImplicitReturns": true,
-        // "noUnusedLocals": true,
-        // "noUnusedParameters": true,
-
-        "target": "es2015",
-        "typeRoots": [
-            "node_modules/@types",
-            "src/typings.d.ts"
-        ],
-        "lib": ["es2019", "dom"],
-        "module": "es2020"
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "noImplicitAny": true,
+      "removeComments": true,
+      "preserveConstEnums": true
     },
-    "exclude": [
-        "**/*.spec.ts"
-    ]
-}
+    "exclude": ["node_modules"]
+  }
