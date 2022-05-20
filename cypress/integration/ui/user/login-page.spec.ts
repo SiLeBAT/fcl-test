@@ -37,7 +37,7 @@ describe('Testing the Login Page', function () {
                 cy.get('button').contains('Register').click();
                 cy.get('@paths').then(paths => {
                     cy.url().should('contain', this.paths.register);
-                })
+                });
             });
         });
 
@@ -94,20 +94,18 @@ describe('Testing the Login Page', function () {
         });
 
         it('should display toaster on 500', function () {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: this.routes.login,
-                response: JSON.stringify(this.errors[0].body),
-                status: this.errors[0].status
-
-            }).as('loginRes');
+            cy.intercept(
+                'POST',
+                this.routes.login,
+                {
+                    statusCode: this.errors[0].status,
+                    body: JSON.stringify(this.errors[0].body)
+                }
+            );
 
             cy.get('@emailInput').type('NonexistentUser@none.com');
             cy.get('@passwordInput').type('NonexistentPassword');
             cy.get('@loginButton').click();
-
-            cy.wait('@loginRes');
 
             cy.contains(this.toaster.loginErrorPart1);
             cy.contains(this.toaster.loginErrorPart2);
@@ -115,20 +113,18 @@ describe('Testing the Login Page', function () {
         });
 
         it('should display toaster for single failed attempts', function () {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: this.routes.login,
-                response: JSON.stringify(this.errors[1].body),
-                status: this.errors[1].status
-
-            }).as('loginRes');
+            cy.intercept(
+                'POST',
+                this.routes.login,
+                {
+                    statusCode: this.errors[1].status,
+                    body: JSON.stringify(this.errors[1].body)
+                }
+            );
 
             cy.get('@emailInput').type(this.users[0].email);
             cy.get('@passwordInput').type('wrongPassword');
             cy.get('@loginButton').click();
-
-            cy.wait('@loginRes');
 
             cy.contains(this.toaster.loginErrorPart1);
             cy.contains(this.toaster.loginErrorPart2);
