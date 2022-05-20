@@ -44,7 +44,7 @@ describe('Testing the Header of the app', function () {
                     .should('contain', 'FoodChain-Lab')
                     .and('have.class', 'no-hover');
                 cy.get('.fcl-avatar-item').within(function () {
-                    cy.get('mat-menu')
+                    cy.get('mat-menu');
                     cy.get('button').should('have.class', 'mat-icon-button');
                     cy.contains('mat-icon', 'account_circle');
                     cy.get('button').click({ force: true});
@@ -61,7 +61,7 @@ describe('Testing the Header of the app', function () {
 
             this.beforeEach(function () {
                 cy.visit(this.paths.tracing);
-            })
+            });
 
             it('should have the hamburger menu', function () {
                 cy.get('@fclHeader').within(function () {
@@ -139,7 +139,7 @@ describe('Testing the Header of the app', function () {
 
                 cy.get('@fclHeader').within(function () {
                     cy.get('.fcl-avatar-item').within(function () {
-                        cy.get('mat-menu')
+                        cy.get('mat-menu');
                         cy.get('button').should('have.class', 'mat-icon-button');
                         cy.contains('mat-icon', 'account_circle');
                         cy.get('button').click();

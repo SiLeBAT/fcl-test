@@ -54,6 +54,7 @@ describe('Testing the Registration Page', function () {
 
     describe('Testing the Registration Page error states', function () {
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const fillOutRegistrationForm = user => {
             cy.get('@firstNameInput').type(user.firstName);
@@ -232,14 +233,14 @@ describe('Testing the Registration Page', function () {
         });
 
         it('should display toaster on 500', function () {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: this.routes.registration,
-                response: JSON.stringify(this.errors[0].body),
-                status: this.errors[0].status
-
-            }).as('registrationRes');
+            cy.intercept(
+                'POST',
+                this.routes.registration,
+                {
+                    statusCode: this.errors[0].status,
+                    body: JSON.stringify(this.errors[0].body)
+                }
+            );
 
             fillOutRegistrationForm(this.users[4]);
             cy.get('@registerButton').click();
@@ -250,14 +251,14 @@ describe('Testing the Registration Page', function () {
         });
 
         it('should display toaster for 400', function () {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: this.routes.registration,
-                response: JSON.stringify(this.errors[3].body),
-                status: this.errors[3].status
-
-            });
+            cy.intercept(
+                'POST',
+                this.routes.registration,
+                {
+                    statusCode: this.errors[3].status,
+                    body: JSON.stringify(this.errors[3].body)
+                }
+            );
 
             fillOutRegistrationForm(this.users[4]);
             cy.get('@registerButton').click();

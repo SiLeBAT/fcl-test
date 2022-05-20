@@ -62,14 +62,14 @@ describe('Testing the Login Page', function () {
         });
 
         it('should display banner on 500', function () {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: this.routes.login,
-                response: JSON.stringify(this.errors[0].body),
-                status: this.errors[0].status
-
-            }).as('login');
+            cy.intercept(
+                'POST',
+                this.routes.login,
+                {
+                    statusCode: this.errors[0].status,
+                    body: JSON.stringify(this.errors[0].body)
+                }
+            );
 
             cy.get('[name="email"]').type('NonexistentUser@none.com');
             cy.get('[name="password"]').type('NonexistentPassword');
@@ -79,14 +79,15 @@ describe('Testing the Login Page', function () {
         });
 
         it('should disable login for multiple failed attempts', function () {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: this.routes.login,
-                response: JSON.stringify(this.errors[2].body),
-                status: this.errors[2].status
+            cy.intercept(
+                'POST',
+                this.routes.login,
+                {
+                    statusCode: this.errors[0].status,
+                    body: JSON.stringify(this.errors[2].body)
+                }
+            );
 
-            }).as('login');
             cy.get('[name="email"]').type(this.users[0].email);
             cy.get('[name="password"]').type('wrongPassword');
             cy.get('[type="submit"]').click();
@@ -95,14 +96,15 @@ describe('Testing the Login Page', function () {
         });
 
         it('should display banner for single failed attempts', function () {
-            cy.server();
-            cy.route({
-                method: 'POST',
-                url: this.routes.login,
-                response: JSON.stringify(this.errors[1].body),
-                status: this.errors[1].status
+            cy.intercept(
+                'POST',
+                this.routes.login,
+                {
+                    statusCode: this.errors[1].status,
+                    body: JSON.stringify(this.errors[1].body)
+                }
+            );
 
-            }).as('login');
             cy.get('[name="email"]').type(this.users[0].email);
             cy.get('[name="password"]').type('wrongPassword');
             cy.get('[type="submit"]').click();
