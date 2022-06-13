@@ -5,6 +5,7 @@ describe('Testing the Header of the app', function () {
     beforeEach(function () {
         cy.fixture('ui-routes.json').as('paths');
         cy.fixture('users.json').as('users');
+        cy.fixture('example-data.json').as('exampleData');
 
         cy.visit('/');
         cy.get('fcl-page-header').as('fclHeader');
@@ -71,22 +72,28 @@ describe('Testing the Header of the app', function () {
             });
 
             it('should have a link to the dashboard', function () {
-                cy.get('@fclHeader').within(function () {
+                cy.get('@fclHeader').within(() => {
                     cy.contains('.fcl-toolbar-title', 'FoodChain-Lab').click();
                     cy.url().should('contain', this.paths.dashboard);
                 });
             });
 
             it('should have a link to load the example data', function () {
+                const exampleDataFile = this.exampleData[0];
+
                 cy.get('@fclHeader').within(function () {
                     cy.get('.fcl-action-container').within(function () {
-                        cy.get('[data-cy=fcl-example]').as('exampleButton');
+                        cy.get('[data-cy=fcl-load-example-button]').as('exampleButton');
                         cy.get('@exampleButton').should('contain', 'Load Example Data');
                         cy.get('@exampleButton').should('have.attr', 'mattooltip', 'Load Example Data');
                         cy.get('@exampleButton').find('mat-icon').should('contain', 'wb_sunny');
                         cy.get('@exampleButton').click();
                     });
                 });
+                cy.get('[data-cy=fcl-example-sub-menu-button]').as('exampleDataButton');
+                cy.get('@exampleDataButton').should('contain', `${exampleDataFile.name}`)
+                cy.get('@exampleDataButton').click();
+
                 cy.get('.fcl-graph-legend > .fcl-legend');
             });
 
@@ -123,14 +130,21 @@ describe('Testing the Header of the app', function () {
             it('should have a link to open the ROA configuration', function () {
                 cy.get('@fclHeader').within(function () {
                     cy.get('.fcl-action-container').within(function () {
-                        cy.get('[data-cy=fcl-example]').click();
+                        cy.get('[data-cy=fcl-load-example-button]').click();
+                    });
+                });
 
+                cy.get('[data-cy=fcl-example-sub-menu-button]').click();
+
+                cy.get('@fclHeader').within(function () {
+                    cy.get('.fcl-action-container').within(function () {
                         cy.get('[mattooltip="Generate ROA Layout"]').as('roaButton');
                         cy.get('@roaButton').should('contain', 'ROA Style');
                         cy.get('@roaButton').find('mat-icon').should('contain', 'grid_on');
                         cy.get('@roaButton').click();
                     });
                 });
+
                 cy.get('.mat-dialog-title').contains('ROA Report Configuration');
             });
 

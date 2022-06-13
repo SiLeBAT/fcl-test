@@ -94,11 +94,9 @@ describe('Testing the Registration Page', function () {
                 cy.get('@registerButton').should('be.enabled');
                 cy.get('@registerButton').click();
 
-                cy.contains('First Name').should('have.css', 'color', 'rgb(254, 0, 0)');
-                cy.get('mat-error')
+                cy.get('mat-hint')
                     .should('contain', 'Characters \'<\' and \'>\' are not allowed.')
                     .and('have.css', 'color', 'rgb(254, 0, 0)');
-                cy.get('@registerButton').should('be.disabled');
             });
         });
 
@@ -123,11 +121,9 @@ describe('Testing the Registration Page', function () {
                 cy.get('@registerButton').should('be.enabled');
                 cy.get('@registerButton').click();
 
-                cy.contains('Last Name').should('have.css', 'color', 'rgb(254, 0, 0)');
-                cy.get('mat-error')
+                cy.get('mat-hint')
                     .should('contain', 'Characters \'<\' and \'>\' are not allowed.')
                     .and('have.css', 'color', 'rgb(254, 0, 0)');
-                cy.get('@registerButton').should('be.disabled');
             });
         });
 
@@ -206,15 +202,11 @@ describe('Testing the Registration Page', function () {
                     cy.get('@registerButton').should('be.enabled');
                     cy.get('@registerButton').click();
 
-                    cy.contains('Password').should('have.css', 'color', 'rgb(254, 0, 0)');
-
-                    cy.get('mat-error')
+                    cy.get('mat-hint')
                         .should('contain', 'Your password must be at least 10 ' +
                             'characters long, contain at least one number and one special character and have a mixture of ' +
                             'uppercase and lowercase letters.')
                         .and('have.css', 'color', 'rgb(254, 0, 0)');
-
-                    cy.get('@registerButton').should('be.disabled');
                 }
             });
         });
