@@ -3,19 +3,32 @@
 describe('Use-cases Login Page', function () {
     beforeEach(function () {
         cy.viewport(1400, 1000);
-        cy.fixture('ui-routes.json').as('paths');
-        cy.visit('/');
+        cy.fixture('ui-routes.json').as('paths')
+            .then(
+                (paths) => cy.visit(paths.root)
+            );
+        cy.fixture('api-routes.json').as('routes');
+        cy.fixture('success-responses.json').as('successResponses');
+        cy.fixture('users.json').as('users');
+
     });
 
     describe('User1 login', function () {
-        before(() => {
-            cy.fixture('users.json').as('users');
+        beforeEach(() => {
+            cy.get('input[name="email"]').as('emailInput');
+            cy.get('input[name="password"]').as('passwordInput');
+            cy.get('button[type=submit]').as('loginButton');
         });
 
+
+        const fillOutLoginForm = user => {
+            cy.get('@emailInput').type(user.email);
+            cy.get('@passwordInput').type(user.password);
+        };
+
         it('should allow User1 to log in and out again, clearing local storage', function () {
-            cy.get('[name="email"]').type(this.users[0].email);
-            cy.get('[name="password"]').type(this.users[0].password);
-            cy.get('[type="submit"]').click();
+            fillOutLoginForm(this.users[0]);
+            cy.get('@loginButton').click();
             cy.url()
                 .should('include', this.paths.dashboard)
                 .then(() => {
@@ -29,7 +42,7 @@ describe('Use-cases Login Page', function () {
             cy.get('fcl-page-header').within(function () {
                 cy.get('.fcl-avatar-item')
                     .find('button')
-                    .click({ force: true});
+                    .click({ force: true });
             });
 
             cy.get('.mat-menu-content').within(function () {

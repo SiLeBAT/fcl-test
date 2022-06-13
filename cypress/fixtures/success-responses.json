@@ -12,5 +12,16 @@
       "email": "newUser@test.com",
       "registerRequest": true
     }
-  }
+  },
+  {
+    "status": 200,
+    "body": {
+        "firstName": "User1",
+        "lastName": "User1",
+        "email": "user1@test.com",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MjNjYTYyMGE2ODk4OTliZTk2NzRhYzAiLCJpYXQiOjE2NTI5NjcxODAsImV4cCI6MTY1MzA1MzU4MH0.G0P0yqvyhiAJ8CoibuvnWZcCpCKZf29MI_zzF97k5Lg",
+        "instituteId": "abc",
+        "gdprAgreementRequested": true
+    }
+}
 ]
