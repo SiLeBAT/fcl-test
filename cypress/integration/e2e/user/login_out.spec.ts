@@ -26,6 +26,26 @@ describe('Use-cases Login Page', function () {
             cy.get('@passwordInput').type(user.password);
         };
 
+        const logoutFromFcl = uiPath => {
+            cy.get('fcl-page-header').within(function () {
+                cy.get('.fcl-avatar-item')
+                    .find('button')
+                    .click({ force: true });
+            });
+
+            cy.get('.mat-menu-content').within(function () {
+                cy.contains('a', 'Logout').click();
+            });
+
+            cy.url()
+                .should('include', uiPath)
+                .then(() =>
+                    expect(window.localStorage.getItem('currentUser')).to.equal(
+                        null
+                    )
+                );
+        };
+
         it('should allow User1 to log in and out again, clearing local storage', function () {
             fillOutLoginForm(this.users[0]);
             cy.get('@loginButton').click();
@@ -39,23 +59,42 @@ describe('Use-cases Login Page', function () {
                     expect(user.firstName).to.equal('User1');
                 });
 
-            cy.get('fcl-page-header').within(function () {
-                cy.get('.fcl-avatar-item')
-                    .find('button')
-                    .click({ force: true });
-            });
+            logoutFromFcl(this.paths.login);
+        });
 
-            cy.get('.mat-menu-content').within(function () {
-                cy.contains('a', 'Logout').click();
-            });
-
+        it('should show the "The Data Protection Declaration has been changed" dialog when log in', function () {
+            fillOutLoginForm(this.users[6]);
+            cy.get('@loginButton').click();
             cy.url()
-                .should('include', this.paths.login)
-                .then(() =>
-                    expect(window.localStorage.getItem('currentUser')).to.equal(
-                        null
-                    )
-                );
+                .should('include', this.paths.dashboard)
+                .then(() => {
+                    cy.get('div.cdk-overlay-pane').within(() => {
+                        cy.get('form.fcl-gdpr-agreement-dialog')
+                            .should('contain', 'The Data Protection Declaration has been changed');
+                        cy.get('mat-checkbox.mat-checkbox').as('checkbox');
+                        cy.get('button.mat-button-disabled').as('continueButton');
+                        cy.get('@continueButton').should('be.disabled');
+                        cy.get('@checkbox').click();
+                        cy.get('@continueButton').should('be.enabled');
+                        cy.get('@continueButton').click();
+                    });
+                });
+            cy.get('mat-card-content.mat-card-content').as('tracingViewButton');
+
+            cy.get('@tracingViewButton')
+                .should('contain', 'Tracing View');
+
+            logoutFromFcl(this.paths.login);
+
+            fillOutLoginForm(this.users[6]);
+            cy.get('@loginButton').click();
+            cy.url()
+                .should('include', this.paths.dashboard)
+                .then(() => {
+                    cy.get('div.cdk-overlay-pane').should('not.exist');
+                    cy.get('@tracingViewButton')
+                        .should('contain', 'Tracing View');
+                });
         });
     });
 });

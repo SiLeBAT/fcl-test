@@ -40,5 +40,12 @@
     "lastName": "User6",
     "email": "user6@test.com",
     "password": "toshort"
+  },
+  {
+    "id": 7,
+    "firstName": "User7",
+    "lastName": "User7",
+    "email": "data-protection-agreement-expired@test.com",
+    "password": "user7secrettestpassword"
   }
 ]
