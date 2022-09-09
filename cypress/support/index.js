@@ -15,6 +15,9 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+import './commands-tracing-view/shared'
+import './commands-tracing-view/graph'
+import './commands-tracing-view/configuration'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
