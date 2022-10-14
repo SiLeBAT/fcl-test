@@ -5,7 +5,7 @@ describe('Testing the Header of the app', function () {
     beforeEach(function () {
         cy.fixture('ui-routes.json').as('paths');
         cy.fixture('users.json').as('users');
-        cy.fixture('example-data.json').as('exampleData');
+        cy.fixture('example-menu-entries.json').as('exampleData');
 
         cy.visit('/');
         cy.get('fcl-page-header').as('fclHeader');
@@ -91,7 +91,7 @@ describe('Testing the Header of the app', function () {
                     });
                 });
                 cy.get('[data-cy=fcl-example-sub-menu-button]').as('exampleDataButton');
-                cy.get('@exampleDataButton').should('contain', `${exampleDataFile.name}`)
+                cy.get('@exampleDataButton').should('contain', `${exampleDataFile.name}`);
                 cy.get('@exampleDataButton').click();
 
                 cy.get('.fcl-graph-legend > .fcl-legend');
@@ -175,15 +175,15 @@ describe('Testing the Header of the app', function () {
             });
 
             it('should have a link to the dashboard', function () {
-                cy.get('@fclHeader').within(function () {
+                cy.get('@fclHeader').within(() => {
                     cy.contains('.fcl-toolbar-title', 'FoodChain-Lab').click();
                     cy.url().should('contain', this.paths.dashboard);
                 });
             });
 
             it('should have a link to the tracing view', function () {
-                cy.get('@fclHeader').within(function () {
-                    cy.get('.fcl-toolbar-action-container').within(function () {
+                cy.get('@fclHeader').within(() => {
+                    cy.get('.fcl-toolbar-action-container').within(() => {
                         cy.get('[mattooltip="Tracing view"]').as('tracingViewButton');
                         cy.get('@tracingViewButton').should('contain', 'Tracing View');
                         cy.get('@tracingViewButton').find('mat-icon').should('contain', 'track_changes');
