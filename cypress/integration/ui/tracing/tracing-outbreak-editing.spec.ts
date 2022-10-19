@@ -3,6 +3,7 @@ import { GRAPH_MENU_ITEMS } from '../../../fixtures/graph-menu-items.spec';
 
 import { assertSchema, combineSchemas, ObjectSchema, SchemaCollection, VersionedSchema, versionSchemas } from '@cypress/schema-tools';
 import { LEGEND_ENTRIES } from '../../../fixtures/legend-entries.spec';
+import { ENV_CONSTS } from '../../../fixtures/env-constants.spec';
 
 const STATION_COLS_TO_CHECK = [
     COLUMN_LABELS.ID,
@@ -78,12 +79,12 @@ describe('Testing Tracing Outbreak Editing ...', function () {
     describe('running test set 1 ...', function () {
 
         before(function () {
-            cy.uploadModelData(PATH_MODEL_ONE_DELIVERY, 500);
+            cy.uploadModelData(PATH_MODEL_ONE_DELIVERY, { waitInMs: 1000 });
             cy.matchGraphSnapshot('one-delivery-model-graph', GRAPH_CLIP);
         });
 
         beforeEach(function () {
-            cy.uploadModelData(PATH_MODEL_ONE_DELIVERY);
+            cy.uploadModelData(PATH_MODEL_ONE_DELIVERY, { waitInMs: 1000 });
         });
 
         it('check mark outbreak instant graph & legend & station filter update', function () {
@@ -152,8 +153,8 @@ describe('Testing Tracing Outbreak Editing ...', function () {
 
     describe('running test set 2 ...', function () {
 
-        const WRITE_MODEL_PATH = 'tmp/' + PATH_MODEL_ONE_DELIVERY.split('.json')[0] + '-outbreaks-source-target';
-        const LOAD_MODEL_PATH = '../../' + WRITE_MODEL_PATH;
+        const modelName = PATH_MODEL_ONE_DELIVERY.split('.json')[0];
+        const PATH_OF_MODIFIED_MODEL = `${Cypress.env(ENV_CONSTS.TMP_FOLDER)}/${modelName}-outbreaks-source-target`;
 
         before(function () {
             // creates a temporary model file with outbreaks
@@ -163,14 +164,14 @@ describe('Testing Tracing Outbreak Editing ...', function () {
                         n.weight = 1;
                     }
                 });
-                cy.writeFile(WRITE_MODEL_PATH, data);
+                cy.writeFile(PATH_OF_MODIFIED_MODEL, data);
             });
-            cy.uploadModelData(LOAD_MODEL_PATH);
+            cy.uploadModelData(PATH_OF_MODIFIED_MODEL, { addFixturesDirPrefix: false, waitInMs: 1000 });
             cy.matchGraphSnapshot('one-delivery-model-outbreaks-source-target_graph', GRAPH_CLIP);
         });
 
         beforeEach(function () {
-            cy.uploadModelData(LOAD_MODEL_PATH);
+            cy.uploadModelData(PATH_OF_MODIFIED_MODEL, { addFixturesDirPrefix: false, waitInMs: 1000 });
         });
 
         it('check unmark outbreaks instant graph & legend & station filter update', function () {

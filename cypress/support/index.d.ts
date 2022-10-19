@@ -56,11 +56,14 @@ namespace Cypress {
     clickGraphMenuButton(labels: string[]): void;
 
     downloadModelData(): Chainable<string>;
-    uploadModelData(fileName: string, wait?: number): void;
+    uploadModelData(fileName: string, options?: { waitInMs?: number; addFixturesDirPrefix?: boolean }): void;
     loadExampleData(entry: string | string[], waitInMs?: number): void;
 
     selectGraphElements(positions: Position[]): void;
     openGraphContextMenuAndSelect(pos: Position | Position[], menuItems: string[]): void;
+
+    onlyOn(x: string | boolean): void;
+    skipOn(x: string | boolean): void;
   }
 }
 }

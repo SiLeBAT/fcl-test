@@ -1,6 +1,6 @@
 Cypress.Commands.add("matchGraphSnapshot", (fileNameOrOptions, options) => {
     cy.get('fcl-schema-graph:not(:hidden),fcl-gis-graph:not(:hidden)').within(() => {
-        cy.get('.fcl-graph').matchPrefixedImageSnapshot(fileNameOrOptions, options);
+        cy.get('.fcl-graph').matchImageSnapshot(fileNameOrOptions, options);
     });
 });
 
@@ -106,7 +106,7 @@ Cypress.Commands.add("matchLegendEntryNodeSymbolSnapshot", (fileName, entryName)
         cy.get('fcl-schema-graph:not(:hidden),fcl-gis-graph:not(:hidden)').get('.fcl-graph-legend').get('table').within(function () {
             cy.get('tr').eq(entryIndex).within(function () {
                 cy.get('fcl-node-symbol-view svg').within(function () {
-                    cy.root().matchPrefixedImageSnapshot(fileName);
+                    cy.root().matchImageSnapshot(fileName);
                 });
             });
         });
@@ -123,7 +123,7 @@ Cypress.Commands.add("matchLegendEntryEdgeSymbolSnapshot", (fileName, entryName)
         cy.get('fcl-schema-graph:not(:hidden),fcl-gis-graph:not(:hidden)').get('.fcl-graph-legend').get('table').within(function () {
             cy.get('tr').eq(entryIndex).within(function () {
                 cy.get('fcl-edge-symbol-view svg').within(function () {
-                    cy.root().matchPrefixedImageSnapshot(fileName);
+                    cy.root().matchImageSnapshot(fileName);
                 });
             });
         });

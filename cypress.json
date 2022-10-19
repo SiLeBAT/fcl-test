@@ -4,6 +4,15 @@
     "viewportHeight": 1024,
     "video": false,
     "env": {
-        "add-image-snapshot-prefix": "unknown-"
+        "//imageSnapshotPrefix": "null means, that this prefix is not preset and will be replaced by <platform>-<browser>-",
+        "imageSnapshotPrefix": null,
+        "skipImageSnapshots": false,
+        "//failOnSnapshotDiff": "any values will cause a non failure on snapshot diffs, only if this settings is not sepcified a diff will fail.",
+        "failOnMissingImageSnapshots": false,
+        "updateSnapshots": false,
+        "imageSnapshotsDir": "cypress/snapshots",
+        "dataSnapshotsDir": "cypress/snapshots",
+        "tmpFolder": "./tmp",
+        "skipRunOnceTests": false
     }
 }

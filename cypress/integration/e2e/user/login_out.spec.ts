@@ -1,4 +1,6 @@
 /// <reference types="Cypress" />
+import { ENV_CONSTS } from '../../../fixtures/env-constants.spec';
+import { User } from '../../../support/test.model';
 
 describe('Use-cases Login Page', function () {
     beforeEach(function () {
@@ -21,12 +23,12 @@ describe('Use-cases Login Page', function () {
         });
 
 
-        const fillOutLoginForm = user => {
+        const fillOutLoginForm = (user: User) => {
             cy.get('@emailInput').type(user.email);
             cy.get('@passwordInput').type(user.password);
         };
 
-        const logoutFromFcl = uiPath => {
+        const logoutFromFcl = (uiPath: string) => {
             cy.get('fcl-page-header').within(function () {
                 cy.get('.fcl-avatar-item')
                     .find('button')
@@ -55,7 +57,7 @@ describe('Use-cases Login Page', function () {
                     const userJSON = window.localStorage.getItem('currentUser');
                     expect(userJSON).to.not.equal(null);
                     // tslint:disable-next-line: no-non-null-assertion
-                    const user = JSON.parse(userJSON);
+                    const user = JSON.parse(userJSON as string);
                     expect(user.firstName).to.equal('User1');
                 });
 
@@ -63,6 +65,9 @@ describe('Use-cases Login Page', function () {
         });
 
         it('should show the "The Data Protection Declaration has been changed" dialog when log in', function () {
+            cy.skipOn(Cypress.env(ENV_CONSTS.SKIP_RUN_ONCE_TESTS) === true);
+            // perform this test only on first cypress run because this test updates the gdprDate and thus
+            // makes this test failing on additional runs
             fillOutLoginForm(this.users[6]);
             cy.get('@loginButton').click();
             cy.url()

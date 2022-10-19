@@ -1,0 +1,236 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Run E2e Tests with <browser> on <os>
+
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        required: true
+        type: string
+        description: "Host to run the test agains."
+      browser:
+        required: true
+        type: choice
+        description: "Browser to use for the test."
+        options:
+        - chrome
+        - firefox
+        - edge
+      browser_version:
+        required: false
+        default: ''
+        type: string
+        description: "Browser version to use for the test."
+      os:
+        required: true
+        type: choice
+        description: "Operating system to run the test on."
+        #  See https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners for more information.
+        options:
+        - macos-latest
+        - macos-12
+        - macos-11
+        - ubuntu-latest
+        - ubuntu-22.04
+        - ubuntu-20.04
+        - windows-latest
+        - windows-2022
+        - windows-2019
+      failOnSnapshotDiff:
+        required: false
+        default: 'true'
+        description: "If true: Cypress tests fail on image snapshot mismatches."
+        type: choice
+        options:
+        - 'true'
+        - 'false'
+      updateImageSnapshots:
+        required: false
+        default: 'false'
+        description: "If 'true': Image snapshots will be updated."
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+        # more suitable would be 'type: boolean', BUT:
+        # 'type: boolean' with 'default: false' seems to be buggy so we switch to string
+        # see bug: https://github.com/cli/cli/issues/5246
+        # or https://github.com/orgs/community/discussions/27262
+      skipImageSnapshots:
+        required: false
+        default: 'false'
+        description: "If 'true': The image snapshots will be skipped."
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+      failOnMissingImageSnapshots:
+        required: false
+        default: 'true'
+        description: "If 'true': Cypress test will fail, if image snapshots are missing."
+        type: choice
+        options:
+        - 'true'
+        - 'false'
+      imageSnapshotPrefix:
+        required: false
+        default: 'github-{platform}-{browser}-'
+        type: string
+        description: >
+          Prefix to add to image snapshots.
+          Substituted placeholders: {platform} {browser} {browserVersion} {browserMajorVersion}
+          '' means no prefix
+      skipRunOnceTests:
+        required: false
+        default: 'false'
+        description: "If 'true': Cypress test will skip tests, that can be run once after the setup of the test db."
+        type: choice
+        options:
+        - 'true'
+        - 'false'
+
+  workflow_call:
+    inputs:
+      host:
+        required: true
+        type: string
+        description: "Host to run the test agains."
+      browser:
+        required: true
+        type: string
+        description: "Browser to use for the test. Available options chrome, firefox, edge.
+      browser_version:
+        required: false
+        default: ''
+        type: string
+        description: "Browser to use for the test. Available options chrome, firefox, edge."
+      os:
+        required: true
+        type: string
+        description: "Operating system to run the test on."
+      failOnSnapshotDiff:
+        required: false
+        default: 'true'
+        description: "If 'true': Cypress tests fail on image snapshot mismatches."
+        type: string
+      updateImageSnapshots:
+        required: false
+        default: 'false'
+        description: "If 'true': Image snapshots will be updated."
+        type: string
+      skipImageSnapshots:
+        required: false
+        default: 'false'
+        description: "If 'true': The image snapshots will be skipped."
+        type: string
+      failOnMissingImageSnapshots:
+        required: false
+        default: 'true'
+        description: "If 'true': Cypress test will fail, if image snapshots are missing."
+        type: string
+      imageSnapshotPrefix:
+        required: false
+        default: 'github-{platform}-{browser}-'
+        type: string
+        description: >
+          Prefix to add to image snapshots.
+          Substituted placeholders: {platform} {browser} {browserVersion} {browserMajorVersion}
+          '' means no prefix
+      skipRunOnceTests:
+        required: false
+        default: 'false'
+        type: string
+        description: "If 'true': Cypress test will skip tests, that can be run once after the setup of the test db."
+
+jobs:
+  e2eTest:
+    name: ${{ inputs.os }}-${{ inputs.browser }}${{ inputs.browser_version != null && format('({0})', inputs.browser_version) || '' }}
+    runs-on: ${{ inputs.os }}
+
+    steps:
+    - name: debug inputs
+      run: |
+        echo "os: ${{ inputs.os }}"
+        echo "browser: ${{ inputs.browser }}"
+        echo "browser_version: ${{ inputs.browser_version }}"
+        echo "imageSnapshotPrefix: ${{ inputs.imageSnapshotPrefix }}"
+        echo "failOnSnapshotDiff: ${{ inputs.failOnSnapshotDiff }}"
+        echo "updateImageSnapshots: ${{ inputs.updateImageSnapshots }}"
+        echo "skipImageSnapshots: ${{ inputs.skipImageSnapshots }}"
+        echo "failOnMissingImageSnapshots: ${{ inputs.failOnMissingImageSnapshots }}"
+        echo "skipRunOnceTests: ${{ inputs.skipRunOnceTests }}"
+    - name: check host
+      if: ${{ inputs.host == null }}
+      run: |
+        echo "Invalid host."
+        exit 1
+    - name: check browser
+      if: ${{ inputs.browser == null }}
+      run: |
+        echo "Invalid browser."
+        exit 1
+    - name: check browser_version
+      if: ${{ inputs.browser_version != null && inputs.browser != 'firefox'}}
+      run: |
+        echo "The browser version can only be set for firefox."
+        exit 1
+    - name: setup specific firefox version
+      if: ${{ inputs.browser_version != null && inputs.browser == 'firefox' }}
+      # uses: browser-actions/setup-firefox@latest
+      # we use a specific commit here because this is external code
+      uses: browser-actions/setup-firefox@c990ef23a9bedbbe657b163aaf0f3b7c608ea9f0
+      with:
+        firefox-version: ${{ inputs.browser_version }}
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Use Node.js ${{ inputs.node_version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node_version }}
+        cache: 'npm'
+    - name: Install packages
+      id: npm-ci
+      run: npm ci --force
+    - name: Remove image snapshots
+      if: ${{ inputs.updateImageSnapshots == 'true' }}
+      run: npm run clean-image-snapshots
+    - name: Run cypress (pre-check)
+      run: npm run test:e2e:precheck -- --browser=${{ inputs.browser }} --config baseUrl="https://${{ inputs.host }}"
+    - name: Run cypress
+      id: run-cypress
+      run: >
+        npx cypress run
+        --browser=${{ inputs.browser }}
+        --config baseUrl="https://${{ inputs.host }}",ignoreTestFiles=setup-check.spec.ts
+        --env
+        ${{ format('{0},{1},{2},{3},{4}{5}',
+              format('imageSnapshotPrefix="{0}"', inputs.imageSnapshotPrefix),
+              format('updateSnapshots={0}', inputs.updateImageSnapshots),
+              format('failOnMissingImageSnapshots={0}', inputs.failOnMissingImageSnapshots),
+              format('skipImageSnapshots={0}', inputs.skipImageSnapshots),
+              format('skipRunOnceTests={0}', inputs.skipRunOnceTests),
+              inputs.failOnSnapshotDiff == true  && ' ' || ',failOnSnapshotDiff=false'
+        ) }}
+    - name: Archive image snapshots
+      if: ${{ (failure() || success()) && steps.run-cypress.conclusion == 'success' && inputs.updateImageSnapshots == 'true' }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: updated-image-snapshots-${{ inputs.os }}-${{ inputs.browser }}${{ inputs.browser_version != null && format('-{0}', inputs.browser_version) || '' }}
+        path: cypress/snapshots/**/*.snap.png
+        if-no-files-found: ignore
+    - name: Archive image snapshot mismatches
+      if: ${{ failure() || success() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: image-snapshot-mismatches
+        path: cypress/snapshots/**/*.diff.png
+        if-no-files-found: ignore
+    - name: Archive screenshots
+      if: ${{ failure() || success() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: screenshots-${{ inputs.os }}-${{ inputs.browser }}${{ inputs.browser_version != null && format('-{0}', inputs.browser_version) || '' }}
+        path: cypress/screenshots
+        if-no-files-found: ignore

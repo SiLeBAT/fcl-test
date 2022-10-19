@@ -1,0 +1,93 @@
+# This workflow will call e2e test runs for a set of operating systems, browsers and browser versions
+
+name: Run e2e tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        required: true
+        type: string
+        description: 'Host to run the test against'
+      failOnSnapshotDiff:
+        required: false
+        type: choice
+        default: 'true'
+        description: "If true: Cypress tests fail on image snapshot mismatches."
+        options:
+        - 'false'
+        - 'true'
+        # more suitable would be 'type: boolean', BUT:
+        # 'type: boolean' with 'default: false' seems to be buggy so we switch to string
+        # see bug: https://github.com/cli/cli/issues/5246
+        # or https://github.com/orgs/community/discussions/27262
+      updateImageSnapshots:
+        required: false
+        default: 'false'
+        description: "If 'true': Image snapshots will be updated."
+        type: choice
+        options:
+        - 'true'
+        - 'false'
+      skipImageSnapshots:
+        required: false
+        default: 'false'
+        description: "If 'true': The image snapshots will be skipped."
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+      failOnMissingImageSnapshots:
+        required: false
+        default: 'true'
+        description: "If 'true': Cypress test will fail, if image snapshots are missing."
+        type: choice
+        options:
+        - 'true'
+        - 'false'
+      imageSnapshotPrefix:
+        required: false
+        type: string
+        default: 'github-{platform}-{browser}-'
+        description: >
+          Prefix to add to image snapshots.
+          Substituted placeholders: {platform} {browser} {browserVersion} {browserMajorVersion}
+          '' means no prefix
+        # here we use <empty> because '' and null cannot be discriminated, so '<empty' is used as null here
+
+jobs:
+  T:
+    strategy:
+      # max-parallel: 1
+      # use seriel excution of jobs if you are using an
+      # artifactory from parrallel jobs
+      # otherwise you might corrupt your artifactories
+      # see: https://github.com/actions/upload-artifact
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-12
+            browser: chrome
+            firstRun: true
+          - os: windows-2022
+            browser: chrome
+          - os: ubuntu-22.04
+            browser: chrome
+          - os: windows-2022
+            browser: edge
+          - os: ubuntu-22.04
+            browser: firefox
+            browser_version: 91.13.0esr
+    name: ${{ matrix.os }}-${{ matrix.browser }}${{ matrix.browser_version != null && format('({0})', matrix.browser_version) || '' }}
+    uses: ./.github/workflows/run-e2e.yml
+    with:
+      host: ${{ inputs.host }}
+      os: ${{ matrix.os }}
+      browser: ${{ matrix.browser }}
+      browser_version: ${{ matrix.browser_version }}
+      failOnSnapshotDiff: ${{ inputs.failOnSnapshotDiff }}
+      updateImageSnapshots: ${{ inputs.updateImageSnapshots }}
+      skipImageSnapshots: ${{ inputs.skipImageSnapshots }}
+      failOnMissingImageSnapshots: ${{ inputs.failOnMissingImageSnapshots }}
+      imageSnapshotPrefix: ${{ inputs.imageSnapshotPrefix }}
+      skipRunOnceTests: ${{ matrix.firstRun && 'false' || 'true' }}
