@@ -2,7 +2,7 @@ import { CONFIGURATION_TABS } from '../../fixtures/configuration_tabs.spec';
 import { COLUMN_LABELS } from '../../fixtures/column-labels.spec';
 
 Cypress.Commands.add("matchFilterTableSnapshot", (fileNameOrOptions, options) => {
-    cy.get('ngx-datatable').matchPrefixedImageSnapshot(fileNameOrOptions, options);
+    cy.get('ngx-datatable').matchImageSnapshot(fileNameOrOptions, options);
 });
 
 Cypress.Commands.add("openConfigurationSideBar", () => {
@@ -222,7 +222,7 @@ Cypress.Commands.add("matchFilterTableRowSymbolSnapshot", (fileName, id) => {
         cy.get('ngx-datatable datatable-body-row').eq(rowIndex).within(() => {
             cy.get('datatable-body-cell').eq(symbolColumnIndex).within(() => {
                 cy.get('svg').within(() => {
-                    cy.root().matchPrefixedImageSnapshot(fileName);
+                    cy.root().matchImageSnapshot(fileName);
                 })
             });
         });

@@ -1,8 +1,18 @@
-Cypress.Commands.add("uploadModelData", (filepath, waitInMs = 200) => {
+Cypress.Commands.add("uploadModelData", (filePath, options ) => {
+    const defaultOptions = {
+        waitInMs: 200,
+        addFixturesDirPrefix: true
+    };
+    options = {
+        ...defaultOptions,
+        ...(options === undefined ? {} : options)
+    };
+
+    filePath = options.addFixturesDirPrefix ? `cypress/fixtures/${filePath}` : filePath;
     cy.get('fcl-page-header').within(function () {
-        cy.get('[data-cy=fcl-upload-model-fileinput]').selectFile('cypress/fixtures/' + filepath, { force: true });
-        if (waitInMs > 0) {
-            cy.wait(waitInMs);
+        cy.get('[data-cy=fcl-upload-model-fileinput]').selectFile(filePath, { force: true });
+        if (options.waitInMs > 0) {
+            cy.wait(options.waitInMs);
         }
     });
 });
@@ -10,18 +20,18 @@ Cypress.Commands.add("uploadModelData", (filepath, waitInMs = 200) => {
 Cypress.Commands.add("downloadModelData", () => {
     const downloadsFolder = Cypress.config('downloadsFolder');
     cy.task('getFilesInFolder', downloadsFolder).then(files => {
-        if (files === null) {
-            throw new Error(`Could not read files in folder '${downloadsFolder}'`)
-        }
-        const oldDownloadFiles = files;
+
+        const oldDownloadFiles = files || [];
 
         cy.get('[data-cy=fcl-download-model-button]').click();
 
-        cy.wait(1000);
+        // this is needed because sometimes if the download is
+        // in slower environments the download isn't finished now
+        cy.wait(2000);
 
         cy.task('getFilesInFolder', downloadsFolder).then(files => {
             if (files === null) {
-                throw new Error(`Could not read files in folder '${downloadsFolder}'`)
+                throw new Error(`Could not read files in folder (p2) '${downloadsFolder}'`)
             } else {
                 const newFiles = files.filter(f => oldDownloadFiles.indexOf(f) < 0);
 

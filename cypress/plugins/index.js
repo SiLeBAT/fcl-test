@@ -35,6 +35,11 @@ module.exports = (on, config) => {
         if (browser.name === 'edge' && browser.isHeadless) {
             launchOptions.args.push('--window-size=1280,1024');
         }
+
+        // force color profile
+        if (browser.family === 'chromium' && browser.name !== 'electron') {
+            launchOptions.args.push('--force-color-profile=srgb');
+        }
         return launchOptions;
     });
     addMatchImageSnapshotPlugin(on, config);
@@ -45,6 +50,11 @@ module.exports = (on, config) => {
           }
 
           return null
+        }
+    });
+    on('task', {
+        pathExists(path) {
+          return fs.existsSync(path);
         }
     });
     on('task', {
@@ -62,5 +72,18 @@ module.exports = (on, config) => {
           console.log(message)
           return null
         }
-      })
+    });
+    on('task', {
+        logSkip (message) {
+          console.log('\x1b[34m%s\x1b[0m', message);
+          return null
+        }
+    });
+    on('task', {
+        logWarn (message) {
+          console.log('\x1b[31m%s\x1b[0m', message);
+          return null
+        }
+    });
+
 }

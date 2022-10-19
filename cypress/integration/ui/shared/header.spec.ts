@@ -145,7 +145,7 @@ describe('Testing the Header of the app', function () {
                     });
                 });
 
-                cy.get('.mat-dialog-title').contains('ROA Report Configuration');
+                cy.get('.mat-dialog-title', { timeout: 10000 }).contains('ROA Report Configuration');
             });
 
             it('should have the avatar', function () {

@@ -87,7 +87,7 @@ describe('Testing the TracingViewGraph of the app', function () {
         });
 
         it('should upload a model', function () {
-            cy.uploadModelData('example-data.json', 1000);
+            cy.uploadModelData('example-data.json', { waitInMs: 1000});
             cy.matchGraphSnapshot('uploaded-model_graph');
         });
     });
@@ -103,10 +103,16 @@ describe('Testing the TracingViewGraph of the app', function () {
         });
 
         it('should download a model', function () {
-            cy.uploadModelData('example-data.json');
+            cy.uploadModelData('example-data.json', { waitInMs: 2000 });
             cy.downloadModelData().then(path => {
                 cy.readFile(path).then(observedData => {
                     cy.fixture('example-data.json').then(expectedData => {
+                        // we need to do this because the transformation is still written to json
+                        // and very dependent on the screen size
+                        // so we are neglecting this information
+                        // Please remove modification if transformation is not writen to json anymore
+                        observedData.settings.view.graph.transformation = null;
+                        expectedData.settings.view.graph.transformation = null;
                         expect(observedData).to.deep.equal(expectedData);
                     });
                 });

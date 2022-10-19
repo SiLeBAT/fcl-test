@@ -18,6 +18,7 @@ import './commands'
 import './commands-tracing-view/shared'
 import './commands-tracing-view/graph'
 import './commands-tracing-view/configuration'
+require('@cypress/skip-test/support')
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

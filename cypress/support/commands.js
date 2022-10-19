@@ -25,6 +25,7 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
+import { ENV_CONSTS } from '../fixtures/env-constants.spec';
 import 'cypress-wait-until';
 
 addMatchImageSnapshotCommand({
@@ -52,11 +53,15 @@ Cypress.Commands.add("login", user => {
         });
 });
 
-Cypress.Commands.add("matchPrefixedImageSnapshot", (fileNameOrOptions, options) => {
+Cypress.Commands.overwrite('matchImageSnapshot', (originalFn, element, fileNameOrOptions, options) => {
     const defaultOptions = {
+        failureThreshold: 1, // default 0
+        failureThresholdType: 'pixel', // default 'pixel'   ('pixel' | 'percent')
         capture: 'viewport',
         customDiffConfig: { },
-        comparisonMethod: 'ssim'
+        comparisonMethod: 'ssim', // default 'pixelmatch'
+        runInProcess: true, // default: false
+        customSnapshotsDir: Cypress.env(ENV_CONSTS.IMAGE_SNAPSHOTS_DIR)
     };
     options = options !== undefined ? options :
         typeof fileNameOrOptions === 'object' ? fileNameOrOptions :
@@ -66,22 +71,53 @@ Cypress.Commands.add("matchPrefixedImageSnapshot", (fileNameOrOptions, options) 
         ...options
     };
 
-    const snapshotPrefix = Cypress.env('add-image-snapshot-prefix');
-    const fileName = typeof fileNameOrOptions === 'string' ? (snapshotPrefix + fileNameOrOptions) : undefined;
 
+    let snapshotPrefix = Cypress.env(ENV_CONSTS.IMAGE_SNAPSHOT_PREFIX);
+    if (snapshotPrefix === null || snapshotPrefix === undefined) {
+        snapshotPrefix = `${Cypress.platform}-${Cypress.browser.name}-`;
+    }
+
+    snapshotPrefix = snapshotPrefix.replace('{platform}', Cypress.platform);
+    snapshotPrefix = snapshotPrefix.replace('{browser}', Cypress.browser.name);
+    snapshotPrefix = snapshotPrefix.replace('{browserVersion}', Cypress.browser.version);
+    snapshotPrefix = snapshotPrefix.replace('{browserMajorVersion}', Cypress.browser.majorVersion);
+
+    const fileName = typeof fileNameOrOptions === 'string' ? (snapshotPrefix + fileNameOrOptions) : undefined;
     const args = fileName === undefined ? [options] : [fileName, options];
 
-    cy.matchImageSnapshot(...args);
-});
+    const pathInSnapshotsDir = `${Cypress.spec.name}/${fileName}.snap.png`;
+    if (Cypress.env(ENV_CONSTS.SKIP_IMAGE_SNAPSHOTS) === true) {
+        cy.task('logSkip', `Skip image snapshot ${pathInSnapshotsDir}`);
+        return;
+    }
+
+    if (Cypress.env(ENV_CONSTS.FAIL_ON_IMAGE_SNAPSHOT_DIFF) === true) {
+        throw new Error(`env setting '"${ENV_CONSTS.FAIL_ON_IMAGE_SNAPSHOT_DIFF}": true' will not work. To fail on diffs omit this setting.`);
+    }
+
+    const updateImage = Cypress.env(ENV_CONSTS.UPDATE_IMAGE_SNAPSHOTS);
+
+    if (!updateImage && Cypress.env(ENV_CONSTS.FAIL_ON_MISSING_IMAGE_SNAPSHOTS)) { // 'fail-on-missing-image-snapshot')) {
+        const filePath = `${options.customSnapshotsDir}/${pathInSnapshotsDir}`;
+        cy.task('pathExists', filePath).then(pathExists => {
+            if (!pathExists) {
+                throw new Error(`Image snapshot '${pathInSnapshotsDir}' is missing.`);
+            } else {
+                return originalFn(element, ...args);
+            }
+        })
+    } else {
+        return originalFn(element, ...args);
+    }
+})
 
 Cypress.Commands.add("matchJsonSnapshot", (fileName, data) => {
-    const folders = Cypress.spec.relative.split(/[\\\/]/);
-    folders[1] = 'snapshots';
-    const filePath = folders.join('/') + '/' + fileName + '.json';
+    const filePathInSnapshotDir = `${Cypress.spec.name}/${fileName}.json`;
+    const filePath = `${Cypress.env(ENV_CONSTS.DATA_SNAPSHOTS_DIR)}/${filePathInSnapshotDir}`;
     cy.task('readFileMaybe', filePath).then((textOrNull) => {
         if (textOrNull !== null) {
             const refData = JSON.parse(textOrNull);
-            expect(data, 'Snapshot does not match data in \'' + fileName + '\'').to.deep.eq(refData);
+            expect(data, `Snapshot does not match data in '${filePathInSnapshotDir}'`).to.deep.eq(refData);
 
         } else {
             cy.writeFile(filePath, JSON.stringify(data), 'utf8');
