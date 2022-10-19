@@ -100,7 +100,7 @@ on:
       browser:
         required: true
         type: string
-        description: "Browser to use for the test. Available options chrome, firefox, edge.
+        description: "Browser to use for the test. Available options chrome, firefox, edge."
       browser_version:
         required: false
         default: ''
