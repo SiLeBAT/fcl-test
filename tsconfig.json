@@ -16,5 +16,5 @@
       "preserveConstEnums": true
     },
     "exclude": ["node_modules"],
-    "include": ["**/*.ts", "src/shared.ts"]
+    "include": ["**/*.ts"]
   }

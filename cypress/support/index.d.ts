@@ -34,9 +34,9 @@ namespace Cypress {
     getFilterTableData(): Chainable<FilterTableData>;
     openFilterTab(): void;
     openHighlightingTab(): void;
-    openStationFilterTab(columns?: string[], putIDInFront?: boolean): void;
+    openStationFilterTab(columns?: string[]): void;
     openStationHighlightingTab(): void;
-    openDeliveryFilterTab(columns?: string[], putIDInFront?: boolean): void;
+    openDeliveryFilterTab(columns?: string[]): void;
     showFilterColumns(labels: string[]): void;
     matchImageSnapshot(fileName?: string, options?: MatchSnapshotOptions): void;
     matchGraphSnapshot(fileName?: string, options?: MatchSnapshotOptions): void;
@@ -58,6 +58,8 @@ namespace Cypress {
     downloadModelData(): Chainable<string>;
     uploadModelData(fileName: string, options?: { waitInMs?: number; addFixturesDirPrefix?: boolean }): void;
     loadExampleData(entry: string | string[], waitInMs?: number): void;
+
+    checkNameOfLoadedFile(fileName: string): void;
 
     selectGraphElements(positions: Position[]): void;
     openGraphContextMenuAndSelect(pos: Position | Position[], menuItems: string[]): void;

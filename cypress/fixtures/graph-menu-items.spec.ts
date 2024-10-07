@@ -1,7 +1,10 @@
 export const GRAPH_MENU_ITEMS = {
     MARK_AS_OUTBREAK: 'Mark as Outbreak',
     UNMARK_AS_OUTBREAK: 'Unmark as Outbreak',
+    CLEAR_OUTBREAKS: 'Clear Outbreaks',
     CLEAR_OUTBREAK_STATIONS: 'Clear Outbreak Stations',
+    CLEAR_OUTBREAK_DELIVERIES: 'Clear Outbreak Deliveries',
+    CLEAR_ALL_OUTBREAKS: 'Clear All Outbreaks',
     CLEAR_INVISIBILITY: 'Clear Invisibility',
     CLEAR_INVISIBLE_STATIONS: 'Clear Invisible Stations',
     EXPAND_STATION: 'Expand',
@@ -13,4 +16,4 @@ export const GRAPH_MENU_ITEMS = {
     BACKWARD_TRACE: 'Backward Trace',
     FULL_TRACE: 'Full Trace',
     MAKE_INVISIBLE: 'Make Invisible'
-};
+} as const;

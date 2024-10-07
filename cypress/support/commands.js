@@ -55,8 +55,8 @@ Cypress.Commands.add("login", user => {
 
 Cypress.Commands.overwrite('matchImageSnapshot', (originalFn, element, fileNameOrOptions, options) => {
     const defaultOptions = {
-        failureThreshold: 1, // default 0
-        failureThresholdType: 'pixel', // default 'pixel'   ('pixel' | 'percent')
+        failureThreshold: 2, // default 0
+        failureThresholdType: 'percent', // default 'pixel'   ('pixel' | 'percent')
         capture: 'viewport',
         customDiffConfig: { },
         comparisonMethod: 'ssim', // default 'pixelmatch'

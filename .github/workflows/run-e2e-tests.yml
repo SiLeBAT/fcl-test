@@ -66,12 +66,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-12
+          - os: macos-13
             browser: chrome
             firstRun: true
           - os: windows-2022
             browser: chrome
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             browser: chrome
           - os: windows-2022
             browser: edge
