@@ -41,6 +41,7 @@ testem.log
 /e2e
 /cypress/videos
 /cypress/screenshots
+/cypress/snapshots/**/__diff_output__
 /cypress/reports
 /cypress/downloads
 

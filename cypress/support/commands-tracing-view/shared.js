@@ -99,3 +99,11 @@ Cypress.Commands.add("loadExampleData", (entry, waitInMs = 200) => {
         cy.wait(waitInMs);
     }
 });
+
+Cypress.Commands.add("checkNameOfLoadedFile", (fileName) => {
+    cy.get('fcl-page-header').within(function () {
+        cy.get('.fcl-action-container').within(function () {
+            cy.get('.fcl-file-name').should('contain', `File: ${fileName}`);
+        });
+    });
+});

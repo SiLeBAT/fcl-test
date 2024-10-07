@@ -16,11 +16,16 @@ const {
 } = require('cypress-image-snapshot/plugin');
 
 const fs = require('fs');
+const path = require('path');
 
 module.exports = (on, config) => {
     // `on` is used to hook into various events Cypress emits
     // `config` is the resolved Cypress config
     on('before:browser:launch', (browser = {}, launchOptions) => {
+        const downloadDirectory = path.join(__dirname, '..', 'downloads');
+        if (browser.family === 'chromium' && browser.name !== 'electron') {
+            launchOptions.preferences.default['download'] = { default_directory: downloadDirectory }
+        }
         if (browser.name === 'chrome') {
             launchOptions.args.push('--window-size=1280,1024');
         }

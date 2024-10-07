@@ -154,7 +154,7 @@ describe('Testing Tracing Outbreak Editing ...', function () {
     describe('running test set 2 ...', function () {
 
         const modelName = PATH_MODEL_ONE_DELIVERY.split('.json')[0];
-        const PATH_OF_MODIFIED_MODEL = `${Cypress.env(ENV_CONSTS.TMP_FOLDER)}/${modelName}-outbreaks-source-target`;
+        const PATH_OF_MODIFIED_MODEL = `${Cypress.env(ENV_CONSTS.TMP_FOLDER)}/${modelName}-outbreaks-source-target.json`;
 
         before(function () {
             // creates a temporary model file with outbreaks
@@ -212,7 +212,7 @@ describe('Testing Tracing Outbreak Editing ...', function () {
         it('check clear outbreaks instant graph & legend & station filter update', function () {
             const prefix = 'clear-outbreaks';
             cy.openStationFilterTab(STATION_COLS_TO_CHECK);
-            cy.openGraphContextMenuAndSelect(POS.EMPTY_SPACE, [GRAPH_MENU_ITEMS.CLEAR_OUTBREAK_STATIONS]);
+            cy.openGraphContextMenuAndSelect(POS.EMPTY_SPACE, [GRAPH_MENU_ITEMS.CLEAR_OUTBREAKS, GRAPH_MENU_ITEMS.CLEAR_OUTBREAK_STATIONS]);
             cy.matchGraphSnapshot(prefix + '_graph', GRAPH_CLIP);
             cy.matchLegendTextSnapshot(prefix + '_legend');
             cy.matchFilterTableTextSnapshot(prefix + '_station-table', true);
@@ -221,14 +221,14 @@ describe('Testing Tracing Outbreak Editing ...', function () {
         it('check clear outbreaks instant delivery filter update', function () {
             const prefix = 'clear-outbreaks';
             cy.openDeliveryFilterTab(DELIVERY_COLS_TO_CHECK);
-            cy.openGraphContextMenuAndSelect(POS.EMPTY_SPACE, [GRAPH_MENU_ITEMS.CLEAR_OUTBREAK_STATIONS]);
+            cy.openGraphContextMenuAndSelect(POS.EMPTY_SPACE, [GRAPH_MENU_ITEMS.CLEAR_OUTBREAKS, GRAPH_MENU_ITEMS.CLEAR_OUTBREAK_STATIONS]);
             cy.matchFilterTableTextSnapshot(prefix + '_delivery-table', true);
         });
 
         it('check clear outbreaks instant station highlighting update', function () {
             const prefix = 'clear-outbreaks';
             cy.openStationHighlightingTab();
-            cy.openGraphContextMenuAndSelect(POS.EMPTY_SPACE, [GRAPH_MENU_ITEMS.CLEAR_OUTBREAK_STATIONS]);
+            cy.openGraphContextMenuAndSelect(POS.EMPTY_SPACE, [GRAPH_MENU_ITEMS.CLEAR_OUTBREAKS, GRAPH_MENU_ITEMS.CLEAR_OUTBREAK_STATIONS]);
             cy.matchHighlightingTableTextSnapshot(prefix + '_station-hrules-colors-shapes', 1);
         });
 

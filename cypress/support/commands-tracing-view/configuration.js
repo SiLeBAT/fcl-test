@@ -49,7 +49,7 @@ Cypress.Commands.add("openStationHighlightingTab", () => {
     });
 });
 
-Cypress.Commands.add("openStationFilterTab", (columns, putIDInFront) => {
+Cypress.Commands.add("openStationFilterTab", (columns) => {
     cy.openFilterTab();
     cy.get('fcl-filter > fcl-tab-layout > mat-tab-group > mat-tab-header .mat-tab-label')
         .eq(CONFIGURATION_TABS.STATIONS.index)
@@ -59,12 +59,12 @@ Cypress.Commands.add("openStationFilterTab", (columns, putIDInFront) => {
             cy.wrap($stationFilterTabLabel).click();
         }
         if (columns !== undefined) {
-            cy.showFilterColumns(columns, putIDInFront);
+            cy.showFilterColumns(columns);
         }
     });
 });
 
-Cypress.Commands.add("openDeliveryFilterTab", (columns, putIDInFront) => {
+Cypress.Commands.add("openDeliveryFilterTab", (columns) => {
     cy.openFilterTab();
     cy.get('fcl-filter > fcl-tab-layout > mat-tab-group > mat-tab-header .mat-tab-label')
         .eq(CONFIGURATION_TABS.DELIVERIES.index)
@@ -74,43 +74,38 @@ Cypress.Commands.add("openDeliveryFilterTab", (columns, putIDInFront) => {
             cy.wrap($deliveryFilterTabLabel).click();
         }
         if (columns !== undefined) {
-            cy.showFilterColumns(columns, putIDInFront);
+            cy.showFilterColumns(columns);
         }
     });
 });
 
-Cypress.Commands.add("showFilterColumns", (labels, putIDInFront) => {
-    if (putIDInFront!==false && labels.indexOf('ID')>=0 && labels.length > 1) {
-        cy.showFilterColumns(['ID'], false);
-        cy.showFilterColumns(labels, false);
-    } else {
-        cy.get('.mat-tab-body-active .mat-tab-body-active .fcl-more-columns-button').eq(0).click({ force: true });
-        cy.get('fcl-dialog-select').within(function () {
-            // uncheck all checkboxes
-            cy.get(':checkbox').uncheck({ force: true });
+Cypress.Commands.add("showFilterColumns", (labels) => {
+    cy.get('.mat-tab-body-active .mat-tab-body-active .fcl-more-columns-button').eq(0).click({ force: true });
+    cy.get('fcl-dialog-select').within(function () {
+        // uncheck all checkboxes
+        cy.get(':checkbox').uncheck({ force: true });
 
-            cy.get('mat-checkbox .mat-checkbox-label').then(($elements) => {
-                const availableColumns = Cypress.$.makeArray($elements).map((el) => el.innerText.trim())
+        cy.get('mat-checkbox .mat-checkbox-label').then(($elements) => {
+            const availableColumns = Cypress.$.makeArray($elements).map((el) => el.innerText.trim())
 
-                debugger;
-                for(const label of labels) {
-                    const columnIndex = availableColumns.indexOf(label);
-                    if (columnIndex<0) {
-                        throw new Error(`Column '${label}' is not available.`);
-                    }
-                    cy.wrap($elements[columnIndex]).prev().click({ force: true });
+            debugger;
+            for(const label of labels) {
+                const columnIndex = availableColumns.indexOf(label);
+                if (columnIndex<0) {
+                    throw new Error(`Column '${label}' is not available.`);
                 }
+                cy.wrap($elements[columnIndex]).prev().click({ force: true });
+            }
 
-            });
         });
-        cy.get('.mat-dialog-actions button').filter(':contains("OK")').click();
-        cy.waitUntilCdkOverlayDisappeared();
-    }
+    });
+    cy.get('.mat-dialog-actions button').filter(':contains("OK")').click();
+    cy.waitUntilCdkOverlayDisappeared();
 });
 
 Cypress.Commands.add("getFilterTableData", () => {
     const headers = [];
-    cy.get('ngx-datatable datatable-header-cell').each(($el,index) => {
+    cy.get('.mat-tab-body-active .mat-tab-body-active ngx-datatable datatable-header-cell').each(($el,index) => {
         if (index <= 1) {
             const $els = $el.find('fcl-symbol-header-cell-view');
             if ($els.length > 0) {
@@ -134,7 +129,7 @@ Cypress.Commands.add("getFilterTableData", () => {
     });
 
     const rows = [];
-    cy.get('ngx-datatable datatable-body-row').then(($rows) => {
+    cy.get('.mat-tab-body-active .mat-tab-body-active ngx-datatable datatable-body-row').then(($rows) => {
         Cypress.$.each($rows, (index, row) => {
             cy.wrap(row).within(() => {
                 cy.get('datatable-body-cell').then(($cells) => {
@@ -155,7 +150,7 @@ Cypress.Commands.add("getFilterTableData", () => {
 
 Cypress.Commands.add("getHighlightingTableData", () => {
     const highlightingLists = [];
-    cy.get('fcl-highlighting-rules-list-view').each($list => {
+    cy.get('.mat-tab-body-active .mat-tab-body-active fcl-highlighting-rules-list-view').each($list => {
         const rows = [];
         cy.wrap($list).within(() => {
             cy.root().get('.fcl-rules-list-item').each($row => {
@@ -171,10 +166,11 @@ Cypress.Commands.add("getHighlightingTableData", () => {
                             }
                         });
                     }
-
-                    cy.get('.fcl-rules-list-item-counts').then(($countsDiv) => {
-                        row.counts = $countsDiv.text().trim();
-                    });
+                    if ($row.find('.fcl-rules-list-item-counts').length) {
+                        cy.root().get('.fcl-rules-list-item-counts').then(($countsDiv) => {
+                            row.counts = $countsDiv.text().trim();
+                        });
+                    }
                 }).then(() => {
                     rows.push(row);
                 });

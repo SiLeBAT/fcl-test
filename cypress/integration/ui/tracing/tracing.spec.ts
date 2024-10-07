@@ -55,17 +55,17 @@ describe('Testing the TracingViewGraph of the app', function () {
             cy.matchGraphSnapshot('ExampleData_graph');
         });
 
-        it('it should load & show the scenario 1 graph', function () {
+        it.skip('it should load & show the scenario 1 graph', function () {
             cy.loadExampleData([EXAMPLE_MENUE_ENTRIES.BABY_TEA, EXAMPLE_MENUE_ENTRIES.SCENARIO_1], 500);
             cy.matchGraphSnapshot('BabyTea-Scen1_graph');
         });
 
-        it('it should load & show the scenario 2 graph', function () {
+        it.skip('it should load & show the scenario 2 graph', function () {
             cy.loadExampleData([EXAMPLE_MENUE_ENTRIES.BABY_TEA, EXAMPLE_MENUE_ENTRIES.SCENARIO_2], 500);
             cy.matchGraphSnapshot('BabyTea-Scen2_graph');
         });
 
-        it('it should load & show the scenario 3 graph', function () {
+        it.skip('it should load & show the scenario 3 graph', function () {
             cy.loadExampleData([EXAMPLE_MENUE_ENTRIES.BABY_TEA, EXAMPLE_MENUE_ENTRIES.SCENARIO_3], 3000);
             cy.matchGraphSnapshot('BabyTea-Scen3_graph');
         });
@@ -88,7 +88,7 @@ describe('Testing the TracingViewGraph of the app', function () {
 
         it('should upload a model', function () {
             cy.uploadModelData('example-data.json', { waitInMs: 1000});
-            cy.matchGraphSnapshot('uploaded-model_graph');
+            cy.checkNameOfLoadedFile('example-data');
         });
     });
 

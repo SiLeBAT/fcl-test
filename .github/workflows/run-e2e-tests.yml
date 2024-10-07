@@ -66,16 +66,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-12
+          - os: macos-13
             browser: chrome
             firstRun: true
           - os: windows-2022
             browser: chrome
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             browser: chrome
           - os: windows-2022
             browser: edge
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             browser: firefox
             browser_version: 91.13.0esr
     name: ${{ matrix.os }}-${{ matrix.browser }}${{ matrix.browser_version != null && format('({0})', matrix.browser_version) || '' }}
