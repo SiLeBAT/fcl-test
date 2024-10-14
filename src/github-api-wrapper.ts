@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/core';
 import {format as prettyFormat} from 'pretty-format'; // ES2015 modules
 import { components } from '@octokit/openapi-types/types';
-import ProxyAgent from 'proxy-agent';
+import { ProxyAgent } from 'proxy-agent';
 import * as os from 'os';
 import { delay, downloadFile, getTimeSpanString, repeatUntil } from './utils';
 

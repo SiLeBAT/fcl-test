@@ -28,27 +28,33 @@
   },
   "private": true,
   "devDependencies": {
-    "@cypress/schema-tools": "^4.7.9",
+    "@cypress/schema-tools": "^4.7.10",
     "@cypress/skip-test": "^2.6.1",
-    "@types/node": "^18.7.18",
-    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@types/node": "^18.19.55",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
     "cypress": "~9.5.4",
     "cypress-image-snapshot": "^4.0.1",
     "cypress-wait-until": "^1.7.2",
-    "eslint": "^8.23.0",
-    "eslint-plugin-cypress": "^2.12.1",
+    "eslint": "^8.57.1",
+    "eslint-plugin-cypress": "^2.15.2",
     "extract-zip": "^2.0.1",
     "lint-staged": "~11.1.4",
     "prettier": "2.6.1",
     "rimraf": "^3.0.2",
-    "typescript": "^4.8.3"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@octokit/core": "^4.0.0",
+    "@octokit/core": "^4.2.4",
     "command-line-args": "^5.2.1",
-    "config": "^3.3.8",
-    "pretty-format": "^29.0.3",
-    "proxy-agent": "^5.0.0",
+    "config": "^3.3.12",
+    "pretty-format": "^29.7.0",
+    "proxy-agent": "^6.4.0",
     "yargs-parser": "^21.1.1"
+  },
+  "overrides": {
+    "cypress-image-snapshot": {
+      "cypress": "~9.5.4",
+      "jest": "^29"
+    }
   }
 }
