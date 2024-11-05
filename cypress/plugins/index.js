@@ -17,6 +17,7 @@ const {
 
 const fs = require('fs');
 const path = require('path');
+const excel = require('exceljs');
 
 module.exports = (on, config) => {
     // `on` is used to hook into various events Cypress emits
@@ -90,5 +91,65 @@ module.exports = (on, config) => {
           return null
         }
     });
+    on('task', {
+        readXlsxFile (args) {
+            const workbook = new excel.Workbook();
+            return new Promise((resolve, reject) => {
+                workbook.xlsx.readFile(args.readFilePath).then(() => {
+                    workbook.removeWorksheet(args.sheetName);
+                    workbook.xlsx.writeFile(args.writeFilePath).then(() => {
+                        resolve(true)
+                    }).catch((err) => reject(err));
+                }).catch((err) => reject(err));
+            });
 
+        },
+    });
+
+    on('task', {
+        editXlsxFile (args) {
+            const workbook = new excel.Workbook();
+            return new Promise((resolve, reject) => {
+                workbook.xlsx.readFile(args.readFilePath).then(() => {
+                    for (const editOp of args.editOps) {
+                        switch (editOp.type) {
+                            case 'remove-sheets':
+                                editOp.sheets.forEach(sheet => workbook.removeWorksheet(sheet));
+                                break;
+                            case 'edit-sheet':
+                                const worksheet = workbook.getWorksheet(editOp.sheet);
+                                if (worksheet) {
+                                    editOp.cellOps.forEach(cellOp => worksheet.getRow(cellOp.row).getCell(cellOp.col).value = cellOp.value);
+                                } else {
+                                    throw new Error(`Worksheet '${editOp.sheet}' is missing.`);
+                                }
+                                break;
+                            default:
+                                throw new Error(`Unsupported edit type: '${editOp.type}'`);
+                        }
+                    }
+                    workbook.xlsx.writeFile(args.writeFilePath).then(() => {
+                        resolve(true)
+                    }).catch((err) => reject(err));
+                }).catch((err) => reject(err));
+            });
+        },
+    });
+
+    on('task', {
+        getXlsxCellText (args) {
+            const workbook = new excel.Workbook();
+            return new Promise((resolve, reject) => {
+                const { filePath, sheet, cell: { row, col } } = args;
+                workbook.xlsx.readFile(filePath).then(() => {
+                    const worksheet = workbook.getWorksheet(sheet);
+                    if (worksheet) {
+                        resolve(worksheet.getRow(row)?.getCell(col)?.text ?? '');
+                    } else {
+                        reject(`Sheet '${sheet}' is missing.`)
+                    }
+                }).catch((err) => reject(err));
+            });
+        },
+    });
 }

@@ -103,7 +103,29 @@ Cypress.Commands.add("loadExampleData", (entry, waitInMs = 200) => {
 Cypress.Commands.add("checkNameOfLoadedFile", (fileName) => {
     cy.get('fcl-page-header').within(function () {
         cy.get('.fcl-action-container').within(function () {
-            cy.get('.fcl-file-name').should('contain', `File: ${fileName}`);
+            if (typeof fileName === 'string') {
+                cy.get('.fcl-file-name').should('contain', `File: ${fileName}`);
+            } else {
+                cy.get('-fcl-file-name').should('not.exist');
+            }
         });
     });
+});
+
+Cypress.Commands.add("checkToasterText", (expectedText) => {
+    cy.get('.mat-simple-snack-bar-content')
+        .invoke('text').then((observedText) => {
+            if (typeof expectedText === "string") {
+                expect(observedText).to.eq(expectedText);
+            } else if (expectedText instanceof RegExp) {
+                expect(observedText).to.match(expectedText);
+            }
+        });
+});
+
+Cypress.Commands.add("checkErrorToaster", (expectedText) => {
+    cy.get('.snackbar-error')
+        .should('be.visible')
+        .should('have.css', 'background-color', 'rgb(198, 40, 40)')
+        .checkToasterText(expectedText);
 });

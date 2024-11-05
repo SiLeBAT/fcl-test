@@ -48,6 +48,7 @@
     "@octokit/core": "^4.2.4",
     "command-line-args": "^5.2.1",
     "config": "^3.3.12",
+    "exceljs": "^4.4.0",
     "pretty-format": "^29.7.0",
     "proxy-agent": "^6.4.0",
     "yargs-parser": "^21.1.1"

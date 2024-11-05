@@ -59,7 +59,9 @@ namespace Cypress {
     uploadModelData(fileName: string, options?: { waitInMs?: number; addFixturesDirPrefix?: boolean }): void;
     loadExampleData(entry: string | string[], waitInMs?: number): void;
 
-    checkNameOfLoadedFile(fileName: string): void;
+    checkNameOfLoadedFile(fileName: string | undefined): void;
+    checkToasterText(text: string | RegExp): void;
+    checkErrorToaster(text?: string | RegExp): void;
 
     selectGraphElements(positions: Position[]): void;
     openGraphContextMenuAndSelect(pos: Position | Position[], menuItems: string[]): void;
