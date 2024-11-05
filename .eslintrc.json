@@ -158,7 +158,8 @@
                 "@typescript-eslint/semi": [
                     "error",
                     "always"
-                ]
+                ],
+                 "cypress/unsafe-to-chain-command": "off"
             }
         }
     ],
