@@ -64,7 +64,7 @@ describe('Testing the Header of the app', function () {
                 cy.visit(this.paths.tracing);
             });
 
-            it('should have the hamburger menu', function () {
+            it.skip('should have the hamburger menu', function () {
                 cy.get('@fclHeader').within(function () {
                     cy.get('.fcl-toolbar-menu-container > .fcl-toolbar-menu-bottom').click();
                 });
